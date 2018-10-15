@@ -12,7 +12,9 @@ class Album extends Component {
     this.state = {
       album: selectedAlbum,
       currentSong: selectedAlbum.songs[0],
-      isPlaying: false
+      isPlaying: false,
+      songHover: false,
+      hoveredSongIndex: null
     };
 
     this.audioElement = document.createElement('audio');
@@ -45,6 +47,14 @@ class Album extends Component {
     }
   }
 
+  handleSongEnter(index) {
+    this.setState({ songHover: true, hoveredSongIndex: index});
+  }
+
+  handleSongLeave() {
+    this.setState({ songHover: false, hoveredSongIndex: null });
+  }
+
   render() {
     return (
       <section className="album">
@@ -64,13 +74,27 @@ class Album extends Component {
           </colgroup>
           <tbody>
             {
-              this.state.album.songs.map( (song, index) =>
-                <tr className="song" key={index} onClick={() => this.handleSongClick(song)}>
-                  <td>{index + 1}</td>
-                  <td>{song.title}</td>
-                  <td>{song.duration} seconds</td>
-                </tr>
-              )
+              this.state.album.songs.map( (song, index) => {
+                let songNumber = index + 1;
+                let renderPauseIcon = this.state.isPlaying && (this.state.currentSong === song);
+                let renderPlayIcon = !this.state.isPlaying && (this.state.currentSong === song);
+                let songNumberColumnDisplay = <td>{songNumber}</td>;
+
+                if (renderPauseIcon)
+                {songNumberColumnDisplay = <td><span className="ion-md-pause"></span></td>}
+                else if (renderPlayIcon)
+                {songNumberColumnDisplay = <td><span className="ion-md-play"></span></td>}
+                else if ((index === this.state.hoveredSongIndex) && this.state.songHover)
+                {songNumberColumnDisplay = <td><span className="ion-md-play"></span></td>}
+
+                return (
+                  <tr className="song" key={index} onClick={() => this.handleSongClick(song)} onMouseEnter={() => this.handleSongEnter(index)} onMouseLeave={() => this.handleSongLeave()}>
+                    {songNumberColumnDisplay}
+                    <td>{song.title}</td>
+                    <td>{song.duration} seconds</td>
+                  </tr>
+                )
+              })
             }
           </tbody>
         </table>

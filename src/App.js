@@ -9,18 +9,18 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <header>
-          <nav>
-            <Link to='/'>Landing</Link>
-            <Link to='/library'>Library</Link>
-          </nav>
-          <h1>Bloc Jams</h1>
+        <header className="container-fluid">
+          <div className="row">
+            <Link to='/'><h1 className="site-title">Bloc Jams</h1></Link>
+          </div>
         </header>
         <main>
           <Route exact path="/" component={Landing} />
           <Route path="/library" component={Library} />
           <Route path="/album/:slug" component={Album} />
         </main>
+        <footer className="container-fluid">
+        </footer>
       </div>
     );
   }

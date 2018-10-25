@@ -1,32 +1,121 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css?family=Alegreya+Sans|Bungee+Inline|Vollkorn');
+
+html body {
+  background-color: #363a50
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
+header {
+  background-color: #919649;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+a {
+  color: #d7c49e;
+}
+
+a:hover {
+  color: #686943;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4 {
+  color: #919649;
+  font-family: 'Vollkorn', serif;
+}
+
+p {
+  color: #FFFFFF;
+  font-family: 'Alegreya Sans', sans-serif;
+  font-size: 14pt;
+}
+
+.site-title {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-left: 20px;
+  color: #363a50;
+  font-family: 'Bungee Inline', cursive;
+  font-size: 32pt;
+}
+
+.site-title a:hover {
+  text-decoration: none;
+}
+
+.hero-title {
+  margin-top: 15px;
+}
+
+.nav-sidebar {
+  margin-bottom: 35px;
+  margin-left: 20px
+}
+
+.main-nav a {
+  margin-left: 5px;
+  font-size: 16pt
+}
+
+.point-title {
+  color: #919649;
+}
+
+.album-container {
+  margin-top: 50px;
+}
+
+.library-album {
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+#album-title {
+  margin-top: 10px;
+}
+
+#song-list, tbody, tr {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+#song-list {
+  margin-bottom: 40px
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.number-column {
+  width: 200px;
+}
+
+.song-column {
+  padding-left: 20px;
+  padding-right: 10px;
+  width: inherit;
+}
+
+.duration-column {
+  width: auto;
+}
+
+.player-bar {
+  position: absolute;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%);
+  width: inherit;
+}
+
+#buttons, #time-control, #volume-control {
+  width: inherit;
+  color: white;
+}
+
+#time-control {
+  margin-bottom: 20px;
+}
+
+input[type="range"] {
+  width: 70%;
+  margin-left: 8px;
+  margin-right: 8px;
 }

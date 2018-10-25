@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import albumData from './../data/albums';
 import PlayerBar from './PlayerBar';
 
@@ -10,6 +11,9 @@ class Album extends Component {
       return album.slug === this.props.match.params.slug
     });
 
+    this.audioElement = document.createElement('audio');
+    this.audioElement.src = selectedAlbum.songs[0].audioSrc;
+
     this.state = {
       album: selectedAlbum,
       currentSong: selectedAlbum.songs[0],
@@ -19,9 +23,6 @@ class Album extends Component {
       songHover: false,
       hoveredSongIndex: null
     };
-
-    this.audioElement = document.createElement('audio');
-    this.audioElement.src = selectedAlbum.songs[0].audioSrc;
   }
 
   componentDidMount() {
@@ -38,10 +39,10 @@ class Album extends Component {
   }
 
   componentWillUnmount() {
-    this.audioElement.src = null;
-    this.audioElement = null;
     this.audioElement.removeEventListener('timeupdate', this.eventListeners.timeupdate);
     this.audioElement.removeEventListener('durationchange', this.eventListeners.durationchange);
+    this.audioElement.src = null;
+    this.audioElement = null;
   }
 
   play() {
@@ -127,62 +128,75 @@ class Album extends Component {
 
   render() {
     return (
-      <section className="album">
-        <section id="album-info">
-          <img id="album-cover-art" src={this.state.album.albumCover} alt={this.state.album.title}/>
-          <div className="album-details">
-            <h1 id="album-title">{this.state.album.title}</h1>
-            <h2 className="artist">{this.state.album.artist}</h2>
-            <div id="release-info">{this.state.album.releaseInfo}</div>
+      <section>
+        <div className="nav-sidebar container">
+          <h2 className="hero-title">Play Album</h2>
+          <nav className="main-nav">
+            <Link className="row" to='/library'>&lt; Library</Link>
+          </nav>
+        </div>
+        <section className="album-container container">
+          <div className="row justify-content-center">
+            <section id="album-info" className="col-lg-auto">
+              <img id="album-cover-art" src={this.state.album.albumCover} alt={this.state.album.title}/>
+              <div className="album-details">
+                <h1 id="album-title">{this.state.album.title}</h1>
+                <h2 className="artist">{this.state.album.artist}</h2>
+                <div id="release-info"><h3>{this.state.album.releaseInfo}</h3></div>
+              </div>
+            </section>
+            <section id="song-player-container" className="col-lg-5 align-self-center">
+              <table id="song-list" className="row align-items-center">
+                <colgroup>
+                  <col id="song-number-column" />
+                  <col id="song-title-column" />
+                  <col id="song-duration-column" />
+                </colgroup>
+                <tbody>
+                  {
+                    this.state.album.songs.map( (song, index) => {
+                      let renderPauseIcon = this.state.isPlaying && (this.state.currentSong === song);
+                      let renderPlayIcon = !this.state.isPlaying && (this.state.currentSong === song);
+                      let songNumberColumnDisplay = <td className="number-column">{index + 1}</td>;
+
+                      if (renderPauseIcon)
+                      {songNumberColumnDisplay = <td className="number-column"><span className="ion-md-pause"></span></td>}
+                      else if (renderPlayIcon)
+                      {songNumberColumnDisplay = <td className="number-column"><span className="ion-md-play"></span></td>}
+                      else if ((index === this.state.hoveredSongIndex) && this.state.songHover)
+                      {songNumberColumnDisplay = <td className="number-column"><span className="ion-md-play"></span></td>}
+
+                      return (
+                        <tr className="song" key={index} onClick={() => this.handleSongClick(song)} onMouseEnter={() => this.handleSongEnter(index)} onMouseLeave={() => this.handleSongLeave()}>
+                          {songNumberColumnDisplay}
+                          <td className="song-column">{song.title}</td>
+                          <td className="duration-column">{this.formatTime(song.duration)}</td>
+                        </tr>
+                      )
+                    })
+                  }
+                </tbody>
+              </table>
+              <PlayerBar
+                className="row justify-content-center"
+                isPlaying={this.state.isPlaying}
+                currentSong={this.state.currentSong}
+                currentTime={this.state.currentTime}
+                duration={this.state.duration}
+                volume={this.audioElement.volume}
+                formattedCurrentTime={this.formatTime(this.state.currentTime)}
+                formattedDuration={this.formatTime(this.state.duration)}
+                handleSongClick={() => this.handleSongClick(this.state.currentSong)}
+                handlePrevClick={() => this.handlePrevClick()}
+                handleNextClick={() => this.handleNextClick()}
+                handleTimeChange={(e) => this.handleTimeChange(e)}
+                handleVolumeChange={(e) => this.handleVolumeChange(e)}
+              />
+            </section>
           </div>
         </section>
-        <table id="song-list">
-          <colgroup>
-            <col id="song-number-column" />
-            <col id="song-title-column" />
-            <col id="song-duration-column" />
-          </colgroup>
-          <tbody>
-            {
-              this.state.album.songs.map( (song, index) => {
-                let renderPauseIcon = this.state.isPlaying && (this.state.currentSong === song);
-                let renderPlayIcon = !this.state.isPlaying && (this.state.currentSong === song);
-                let songNumberColumnDisplay = <td>{index + 1}</td>;
-
-                if (renderPauseIcon)
-                {songNumberColumnDisplay = <td><span className="ion-md-pause"></span></td>}
-                else if (renderPlayIcon)
-                {songNumberColumnDisplay = <td><span className="ion-md-play"></span></td>}
-                else if ((index === this.state.hoveredSongIndex) && this.state.songHover)
-                {songNumberColumnDisplay = <td><span className="ion-md-play"></span></td>}
-
-                return (
-                  <tr className="song" key={index} onClick={() => this.handleSongClick(song)} onMouseEnter={() => this.handleSongEnter(index)} onMouseLeave={() => this.handleSongLeave()}>
-                    {songNumberColumnDisplay}
-                    <td>{song.title}</td>
-                    <td>{this.formatTime(song.duration)}</td>
-                  </tr>
-                )
-              })
-            }
-          </tbody>
-        </table>
-        <PlayerBar
-          isPlaying={this.state.isPlaying}
-          currentSong={this.state.currentSong}
-          currentTime={this.audioElement.currentTime}
-          duration={this.audioElement.duration}
-          volume={this.audioElement.volume}
-          formattedCurrentTime={this.formatTime(this.audioElement.currentTime)}
-          formattedDuration={this.formatTime(this.audioElement.duration)}
-          handleSongClick={() => this.handleSongClick(this.state.currentSong)}
-          handlePrevClick={() => this.handlePrevClick()}
-          handleNextClick={() => this.handleNextClick()}
-          handleTimeChange={(e) => this.handleTimeChange(e)}
-          handleVolumeChange={(e) => this.handleVolumeChange(e)}
-        />
       </section>
-    );
+        );
   }
 }
 
